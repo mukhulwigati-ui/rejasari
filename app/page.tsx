@@ -1,65 +1,117 @@
-import Image from "next/image";
+// app/page.tsx
+import Header from "@/components/Header";
+import NewsHighlights from "@/components/NewsHighlights";
+// PERBAIKAN UBAH NAMA VARIABEL ALIAS: Agar penulisan komponen di bawah lebih pas dan informatif
+import SidebarSlideshow from "@/components/SidebarSlideshow"; 
+import LeftIklan from "@/components/LeftIklan";
+import MainHeadline from "@/components/MainHeadline";
+import SidebarIklan from "@/components/SidebarIklan";
+import SubContentList from "@/components/SubContentList"; // KITA KEMBALIKAN DI SINI
+import SidebarPopuler from "@/components/SidebarPopuler";
+import PhotoAndNewsList from "@/components/PhotoAndNewsList"; // Postingan Terbaru
+// PERBAIKAN: Import terbarunya lengkap dari lib/sanity
+import { client, indexQuery, highlightCategoryQuery, slideshowQuery } from "@/lib/sanity"; 
 
-export default function Home() {
+// =========================================================
+// Interface Lengkap untuk Mengatasi Error TypeScript youtubeUrl
+// =========================================================
+interface NewsItem {
+  title: string;
+  slug: string;
+  publishedAt?: string;
+  mainImage?: any;
+  youtubeUrl?: string; // Tipe data didaftarkan agar kompilasi Turbopack aman dan sukses
+  categoryTitle?: string;
+}
+
+export default async function HomePage() {
+  // 1. Ambil seluruh data daftar artikel dari Sanity CMS secara real-time dengan casting tipe data
+  const allPosts = await client.fetch<NewsItem[]>(indexQuery);
+
+  // 2. Ambil data kategori highlight (Hasil query berupa objek langsung)
+  const activeHighlight = await client.fetch(highlightCategoryQuery);
+
+  // 3. Ambil data banner slideshow dari database Sanity Studio
+  const slideData = await client.fetch(slideshowQuery) || [];
+
+  // 4. Pisahkan 5 berita teratas untuk komponen MainHeadline (1 utama besar, 4 grid kecil)
+  const headlinePosts = allPosts?.slice(0, 5) || [];
+  
+  // 5. PILAH DATA UNTUK REKOMENDASI (SubContentList)
+  // Kita ambil indeks ke-5 sampai ke-8 untuk masuk ke seksi rekomendasi tengah
+  const rekomendasiPosts = allPosts?.slice(5, 9) || [];
+
+  // 6. ALIRKAN SISA POSTINGAN UNTUK POSTINGAN TERBARU (PhotoAndNewsList)
+  // Kita alirkan sisa data atau allPosts secara fleksibel agar seksi bawah tidak kosong
+  const subPosts = allPosts || [];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col pb-12">
+      <Header />
+
+      <div className="w-full max-w-[1200px] mx-auto px-4 mt-6 space-y-6">
+        
+        {/* =========================================================
+            SEGMEN ATAS: FIXED FLEX LAYOUT (LEBAR SIDEBAR LURUS 300px)
+            ========================================================= */}
+        <div className="flex flex-col lg:flex-row gap-4 w-full items-stretch">
+          
+          {/* Bagian Kiri & Tengah: Berita Highlights melar penuh otomatis */}
+          <div className="flex-1 min-w-0">
+            <NewsHighlights highlightData={activeHighlight} />
+          </div>
+
+          {/* Bagian Kanan: DIKUNCI 300px */}
+          <div className="w-full lg:w-[300px] shrink-0">
+            <SidebarSlideshow slides={slideData} />
+          </div>
+
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* =========================================================
+            SEGMEN BAWAH: TIGA JALUR VERTIKAL MANDIRI (DUAL STICKY FIXED)
+            ========================================================= */}
+        <div className="flex flex-col lg:flex-row gap-4 w-full relative">
+          
+          {/* KOLOM 1: KIRI (Jalur Iklan 160px - Sticky) */}
+          <div className="w-[160px] shrink-0 hidden lg:block">
+            <div className="sticky top-20">
+              <LeftIklan isSticky={true} />
+            </div> 
+          </div>
+
+          {/* KOLOM 2: TENGAH (Aliran Konten Berita Panjang) */}
+          <div className="flex-1 min-w-0 space-y-6">
+            {/* Kirim 5 data teratas ke komponen MainHeadline */}
+            <MainHeadline posts={headlinePosts} />
+            
+            {/* =========================================================
+               FITUR DIKEMBALIKAN: SubContentList (Rekomendasi Berita)
+               ========================================================= */}
+            {rekomendasiPosts.length > 0 && (
+              <SubContentList posts={rekomendasiPosts} />
+            )}
+            
+            {/* =========================================================
+               SEKSI: POSTINGAN TERBARU (PhotoAndNewsList)
+               ========================================================= */}
+            <PhotoAndNewsList posts={subPosts} />
+          </div>
+
+          {/* KOLOM 3: KANAN (Jalur Kumpulan Widget Sidebar - Sticky Populer) */}
+          <div className="w-full lg:w-[300px] shrink-0 flex flex-col gap-6">
+            {/* Muncul normal di atas, akan hilang saat di-scroll */}
+            <SidebarIklan />
+            
+            {/* Mengunci otomatis mengikuti tinggi area konten tengah */}
+            <div className="w-full sticky top-20">
+              <SidebarPopuler isSticky={false} /> 
+            </div>
+          </div>
+
         </div>
-      </main>
+
+      </div>
     </div>
   );
 }
