@@ -1,5 +1,4 @@
 // app/page.tsx
-import Header from "@/components/Header";
 import NewsHighlights from "@/components/NewsHighlights";
 // PERBAIKAN UBAH NAMA VARIABEL ALIAS: Agar penulisan komponen di bawah lebih pas dan informatif
 import SidebarSlideshow from "@/components/SidebarSlideshow"; 
@@ -46,72 +45,69 @@ export default async function HomePage() {
   const subPosts = allPosts || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col pb-12">
-      <Header />
-
-      <div className="w-full max-w-[1200px] mx-auto px-4 mt-6 space-y-6">
+    // PERBAIKAN UTAMA: Mencabut komponen <Header /> karena sudah di-render otomatis secara bersih oleh app/layout.tsx
+    <div className="w-full max-w-[1200px] mx-auto px-4 mt-6 space-y-6 pb-12">
+      
+      {/* =========================================================
+          SEGMEN ATAS: FIXED FLEX LAYOUT (LEBAR SIDEBAR LURUS 300px)
+          ========================================================= */}
+      <div className="flex flex-col lg:flex-row gap-4 w-full items-stretch">
         
-        {/* =========================================================
-            SEGMEN ATAS: FIXED FLEX LAYOUT (LEBAR SIDEBAR LURUS 300px)
-            ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-4 w-full items-stretch">
-          
-          {/* Bagian Kiri & Tengah: Berita Highlights melar penuh otomatis */}
-          <div className="flex-1 min-w-0">
-            <NewsHighlights highlightData={activeHighlight} />
-          </div>
-
-          {/* Bagian Kanan: DIKUNCI 300px */}
-          <div className="w-full lg:w-[300px] shrink-0">
-            <SidebarSlideshow slides={slideData} />
-          </div>
-
+        {/* Bagian Kiri & Tengah: Berita Highlights melar penuh otomatis */}
+        <div className="flex-1 min-w-0">
+          <NewsHighlights highlightData={activeHighlight} />
         </div>
 
-        {/* =========================================================
-            SEGMEN BAWAH: TIGA JALUR VERTIKAL MANDIRI (DUAL STICKY FIXED)
-            ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-4 w-full relative">
-          
-          {/* KOLOM 1: KIRI (Jalur Iklan 160px - Sticky) */}
-          <div className="w-[160px] shrink-0 hidden lg:block">
-            <div className="sticky top-20">
-              <LeftIklan isSticky={true} />
-            </div> 
-          </div>
-
-          {/* KOLOM 2: TENGAH (Aliran Konten Berita Panjang) */}
-          <div className="flex-1 min-w-0 space-y-6">
-            {/* Kirim 5 data teratas ke komponen MainHeadline */}
-            <MainHeadline posts={headlinePosts} />
-            
-            {/* =========================================================
-               FITUR DIKEMBALIKAN: SubContentList (Rekomendasi Berita)
-               ========================================================= */}
-            {rekomendasiPosts.length > 0 && (
-              <SubContentList posts={rekomendasiPosts} />
-            )}
-            
-            {/* =========================================================
-               SEKSI: POSTINGAN TERBARU (PhotoAndNewsList)
-               ========================================================= */}
-            <PhotoAndNewsList posts={subPosts} />
-          </div>
-
-          {/* KOLOM 3: KANAN (Jalur Kumpulan Widget Sidebar - Sticky Populer) */}
-          <div className="w-full lg:w-[300px] shrink-0 flex flex-col gap-6">
-            {/* Muncul normal di atas, akan hilang saat di-scroll */}
-            <SidebarIklan />
-            
-            {/* Mengunci otomatis mengikuti tinggi area konten tengah */}
-            <div className="w-full sticky top-20">
-              <SidebarPopuler isSticky={false} /> 
-            </div>
-          </div>
-
+        {/* Bagian Kanan: DIKUNCI 300px */}
+        <div className="w-full lg:w-[300px] shrink-0">
+          <SidebarSlideshow slides={slideData} />
         </div>
 
       </div>
+
+      {/* =========================================================
+          SEGMEN BAWAH: TIGA JALUR VERTIKAL MANDIRI (DUAL STICKY FIXED)
+          ========================================================= */}
+      <div className="flex flex-col lg:flex-row gap-4 w-full relative">
+        
+        {/* KOLOM 1: KIRI (Jalur Iklan 160px - Sticky) */}
+        <div className="w-[160px] shrink-0 hidden lg:block">
+          <div className="sticky top-20">
+            <LeftIklan isSticky={true} />
+          </div> 
+        </div>
+
+        {/* KOLOM 2: TENGAH (Aliran Konten Berita Panjang) */}
+        <div className="flex-1 min-w-0 space-y-6">
+          {/* Kirim 5 data teratas ke komponen MainHeadline */}
+          <MainHeadline posts={headlinePosts} />
+          
+          {/* =========================================================
+              FITUR DIKEMBALIKAN: SubContentList (Rekomendasi Berita)
+              ========================================================= */}
+          {rekomendasiPosts.length > 0 && (
+            <SubContentList posts={rekomendasiPosts} />
+          )}
+          
+          {/* =========================================================
+              SEKSI: POSTINGAN TERBARU (PhotoAndNewsList)
+              ========================================================= */}
+          <PhotoAndNewsList posts={subPosts} />
+        </div>
+
+        {/* KOLOM 3: KANAN (Jalur Kumpulan Widget Sidebar - Sticky Populer) */}
+        <div className="w-full lg:w-[300px] shrink-0 flex flex-col gap-6">
+          {/* Muncul normal di atas, akan hilang saat di-scroll */}
+          <SidebarIklan />
+          
+          {/* Mengunci otomatis mengikuti tinggi area konten tengah */}
+          <div className="w-full sticky top-20">
+            <SidebarPopuler isSticky={false} /> 
+          </div>
+        </div>
+
+      </div>
+
     </div>
   );
 }

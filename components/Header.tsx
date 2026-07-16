@@ -6,6 +6,7 @@ import { FaSearch, FaYoutube, FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaRe
 import { MdLiveTv } from 'react-icons/md';
 import { HiOutlineNewspaper, HiMenu } from 'react-icons/hi';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Tambahan untuk navigasi programmatik
 import { client, urlFor } from "@/lib/sanity";
 
 function getSanityImageUrl(imageSource: any): string | null {
@@ -30,7 +31,10 @@ function getTodayIndonesianDate() {
 
 export default function Header() {
   const date = getTodayIndonesianDate();
+  const router = useRouter(); // Inisialisasi router Next.js
+  
   const [midBannerData, setMidBannerData] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState(''); // State penampung keyword pencarian
   
   const categoriesRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,6 +48,15 @@ export default function Header() {
     "Jakarta", "Bandung", "Bogor", "Jogja", "Solo", "Semarang", "Surabaya", 
     "Malang", "Bali", "Aceh", "Medan", "Pekanbaru", "Batam", "Palembang", "Balikpapan"
   ];
+
+  // Fungsi penanganan eksekusi pencarian berita
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Pindah ke halaman search dengan membawa query parameter (?q=)
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   useEffect(() => {
     async function fetchBanner() {
@@ -102,7 +115,6 @@ export default function Header() {
   };
 
   return (
-    // PERBAIKAN UTAMA 1: Mengembalikan elemen terluar menggunakan <header> murni agar jangkauan sticky melingkupi seluruh halaman website
     <header className="w-full bg-white select-none relative">
       
       {/* AREA 1: HEADER UTAMA & SLOT BANNER IKLAN */}
@@ -123,11 +135,26 @@ export default function Header() {
               <FaRegUser className="text-xl text-gray-600 cursor-pointer md:hidden" />
             </div>
             
+            {/* =========================================================
+               AREA TENGAH: FORM INPUT PENCARIAN (PERBAIKAN AKTIF)
+               ========================================================= */}
+            {/* PERBAIKAN: Membungkus elemen dengan <form> dan mengikat data state onChange */}
             <div className="w-full md:w-[400px] shrink-0">
-              <div className="relative">
-                <input type="text" placeholder="Cari Berita" className="border border-gray-300 rounded-md py-1.5 pl-5 pr-10 text-xs w-full outline-none bg-gray-50/50 focus:bg-white focus:border-[#0066ad] transition-all" />
-                <FaSearch className="absolute right-4 top-2.5 text-gray-400 text-sm cursor-pointer hover:text-[#0066ad]" />
-              </div>
+              <form onSubmit={handleSearchSubmit} className="relative w-full">
+                <input 
+                  type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari Berita" 
+                  className="border border-gray-300 rounded-md py-1.5 pl-5 pr-10 text-xs w-full outline-none bg-gray-50/50 focus:bg-white focus:border-[#0066ad] transition-all" 
+                />
+                <button 
+                  type="submit" 
+                  className="absolute right-4 top-2.5 text-gray-400 text-sm hover:text-[#0066ad] transition-colors"
+                >
+                  <FaSearch />
+                </button>
+              </form>
             </div>
 
             <div className="hidden md:flex items-center justify-end gap-5 text-gray-500 text-base shrink-0">
@@ -166,10 +193,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* =========================================================
-         BARIS 3: NAVIGASI KATEGORI UTAMA (PERBAIKAN: STICKY MANDIRI & PERMANEN)
-         ========================================================= */}
-      {/* PERBAIKAN UTAMA 2: Ditempel langsung kelas sticky top-0 z-50 di sini agar mengunci melayang abadi */}
+      {/* BARIS 3: NAVIGASI KATEGORI UTAMA */}
       <div className="w-full bg-white border-b border-gray-200 hidden md:block sticky top-0 z-50 shadow-xs">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-11 relative">
           
@@ -212,9 +236,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* =========================================================
-         AREA 3: JALUR KILAS BERITA DAERAH (DILUAR STICKY - ALUR NORMAL)
-         ========================================================= */}
+      {/* LAPISAN B: Jalur Teks KILAS Berita Daerah */}
       <div className="w-full bg-white border-b border-gray-200 hidden md:block">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center h-8 text-[11px] font-sans tracking-wide py-1 relative">
           <span className="font-extrabold text-gray-800 uppercase shrink-0 mr-4 border-r border-gray-300 pr-4 z-10 bg-white">KILAS</span>
