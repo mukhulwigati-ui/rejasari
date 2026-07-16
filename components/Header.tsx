@@ -31,7 +31,6 @@ function getTodayIndonesianDate() {
 export default function Header() {
   const date = getTodayIndonesianDate();
   const [midBannerData, setMidBannerData] = useState<any>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
   
   const categoriesRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -45,18 +44,6 @@ export default function Header() {
     "Jakarta", "Bandung", "Bogor", "Jogja", "Solo", "Semarang", "Surabaya", 
     "Malang", "Bali", "Aceh", "Medan", "Pekanbaru", "Batam", "Palembang", "Balikpapan"
   ];
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 150) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     async function fetchBanner() {
@@ -108,7 +95,6 @@ export default function Header() {
     }
   };
 
-  // PERBAIKAN UTAMA: Menambahkan 'as const' pada msOverflowStyle agar TypeScript menerima tipenya dengan valid
   const hideScrollbarStyle = {
     msOverflowStyle: 'none' as const,
     scrollbarWidth: 'none' as const,
@@ -116,11 +102,11 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full bg-white sticky top-0 z-50 shadow-xs select-none">
+    // PERBAIKAN UTAMA 1: Mengembalikan elemen terluar menggunakan <header> murni agar jangkauan sticky melingkupi seluruh halaman website
+    <header className="w-full bg-white select-none relative">
       
-      {/* BARIS 1 & 2: HILANG SAAT SCROLL DOWN */}
-      <div className={`transition-all duration-300 origin-top overflow-hidden ${isScrolled ? 'max-h-0 opacity-0 pointer-events-none' : 'max-h-[500px] opacity-100'}`}>
-        
+      {/* AREA 1: HEADER UTAMA & SLOT BANNER IKLAN */}
+      <div className="w-full bg-white">
         {/* BARIS 1: HEADER UTAMA */}
         <div className="border-b border-gray-100 bg-white">
           <div className="flex flex-col md:flex-row md:items-center justify-between px-4 py-3 max-w-[1200px] mx-auto gap-3 md:gap-0">
@@ -178,11 +164,13 @@ export default function Header() {
             )}
           </div>
         </div>
-
       </div>
 
-      {/* BARIS 3: NAVIGASI KATEGORI UTAMA */}
-      <div className="w-full bg-white border-b border-gray-200 hidden md:block shadow-xs">
+      {/* =========================================================
+         BARIS 3: NAVIGASI KATEGORI UTAMA (PERBAIKAN: STICKY MANDIRI & PERMANEN)
+         ========================================================= */}
+      {/* PERBAIKAN UTAMA 2: Ditempel langsung kelas sticky top-0 z-50 di sini agar mengunci melayang abadi */}
+      <div className="w-full bg-white border-b border-gray-200 hidden md:block sticky top-0 z-50 shadow-xs">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-11 relative">
           
           <div className="flex items-center gap-2 font-black text-red-600 text-base italic cursor-pointer select-none shrink-0 pr-4">
@@ -224,8 +212,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* LAPISAN B: Jalur Teks KILAS Berita Daerah */}
-      <div className={`w-full bg-white border-b border-gray-200 hidden md:block transition-all duration-200 origin-top overflow-hidden ${isScrolled ? 'max-h-0 opacity-0 pointer-events-none' : 'max-h-8 opacity-100'}`}>
+      {/* =========================================================
+         AREA 3: JALUR KILAS BERITA DAERAH (DILUAR STICKY - ALUR NORMAL)
+         ========================================================= */}
+      <div className="w-full bg-white border-b border-gray-200 hidden md:block">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center h-8 text-[11px] font-sans tracking-wide py-1 relative">
           <span className="font-extrabold text-gray-800 uppercase shrink-0 mr-4 border-r border-gray-300 pr-4 z-10 bg-white">KILAS</span>
           
