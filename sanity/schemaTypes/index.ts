@@ -1,13 +1,12 @@
 // sanity/schemaTypes/index.ts
+
 import { post } from './post';
 import { category } from './category';
 import { iklan } from './iklan';
-import { prestasi } from './prestasi'; // PERBAIKAN: Mengimpor skema prestasi yang baru dibuat
-
-// PERBAIKAN: Mengarahkan ke nama file fisik yang ada di folder Anda yaitu 'sidebarslideshow'
-import { slideshow } from './sidebarslideshow'; 
+import { prestasi } from './prestasi'; // Mengimpor skema prestasi dari file prestasi.ts
+import { slideshow } from './sidebarslideshow'; // Mengimpor skema slideshow
 
 export const schema = {
-  // Memasukkan variabel 'prestasi' ke dalam array types agar muncul di dashboard Sanity Studio
+  // Mendaftarkan seluruh koleksi jenis dokumen ke dalam core array studio Sanity
   types: [post, category, iklan, slideshow, prestasi],
 };

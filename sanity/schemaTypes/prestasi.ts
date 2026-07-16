@@ -1,58 +1,49 @@
-// schemas/prestasi.ts
-import { defineField, defineType } from 'sanity';
+// sanity/schemaTypes/prestasi.ts
 
-export default defineType({
+// Hapus atau biarkan jika tidak dipakai, kita gunakan vanilla object agar aman dari build error SSR
+export const prestasi = {
   name: 'prestasi',
   title: 'Prestasi Siswa',
   type: 'document',
   fields: [
-    defineField({
+    {
       name: 'jenisLomba',
       title: 'Jenis Lomba / Nama Kejuaraan',
       type: 'string',
-      description: 'Contoh: Lomba FLS2N Tingkat Kabupaten, Turnamen Sepak Bola U-12',
-      validation: (Rule) => Rule.required().error('Nama atau jenis lomba wajib diisi.'),
-    }),
-    defineField({
+      description: 'Contoh: Lomba FLS2N Tingkat Kabupaten',
+      validation: (Rule: any) => Rule.required().error('Nama atau jenis lomba wajib diisi.'),
+    },
+    {
       name: 'juaraLomba',
       title: 'Juara Lomba',
       type: 'string',
-      description: 'Contoh: Juara 1, Juara Harapan 2, Medali Emas',
-      validation: (Rule) => Rule.required().error('Tingkat juara wajib diisi.'),
-    }),
-    defineField({
+      description: 'Contoh: Juara 1, Juara Harapan 2',
+      validation: (Rule: any) => Rule.required().error('Tingkat juara wajib diisi.'),
+    },
+    {
       name: 'namaSiswa',
       title: 'Nama Siswa yang Juara',
       type: 'string',
-      description: 'Tulis nama siswa atau nama tim/kelompok yang meraih juara.',
-      validation: (Rule) => Rule.required().error('Nama siswa peraih prestasi wajib diisi.'),
-    }),
-    defineField({
+      validation: (Rule: any) => Rule.required().error('Nama siswa wajib diisi.'),
+    },
+    {
       name: 'tanggalLomba',
       title: 'Waktu / Tanggal Lomba',
       type: 'date',
-      options: {
-        dateFormat: 'YYYY-MM-DD',
-      },
-      description: 'Pilih tanggal pelaksanaan atau saat diterimanya penghargaan.',
-      validation: (Rule) => Rule.required().error('Tanggal pelaksanaan lomba wajib diisi.'),
-    }),
-    defineField({
+      validation: (Rule: any) => Rule.required().error('Tanggal lomba wajib diisi.'),
+    },
+    {
       name: 'foto',
       title: 'Foto Penghargaan / Dokumentasi',
       type: 'image',
-      options: {
-        hotspot: true, // Mengaktifkan fitur crop/focus gambar secara visual di Sanity Studio
-      },
-      description: 'Unggah foto siswa saat menerima piala atau dokumentasi kegiatan lomba.',
-    }),
-    defineField({
+      options: { hotspot: true },
+    },
+    {
       name: 'deskripsi',
       title: 'Keterangan / Deskripsi',
       type: 'text',
-      description: 'Ceritakan singkat mengenai detail jalannya lomba atau pencapaian yang diraih.',
       rows: 4,
-    }),
+    },
   ],
   preview: {
     select: {
@@ -60,7 +51,7 @@ export default defineType({
       subtitle: 'namaSiswa',
       media: 'foto',
     },
-    prepare(selection) {
+    prepare(selection: any) {
       const { title, subtitle, media } = selection;
       return {
         title: title,
@@ -69,4 +60,4 @@ export default defineType({
       };
     },
   },
-});
+};
