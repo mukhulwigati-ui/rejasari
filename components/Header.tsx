@@ -108,8 +108,9 @@ export default function Header() {
     }
   };
 
+  // PERBAIKAN UTAMA: Menambahkan 'as const' pada msOverflowStyle agar TypeScript menerima tipenya dengan valid
   const hideScrollbarStyle = {
-    msOverflowStyle: 'none',
+    msOverflowStyle: 'none' as const,
     scrollbarWidth: 'none' as const,
     WebkitOverflowScrolling: 'touch' as const,
   };
@@ -162,19 +163,12 @@ export default function Header() {
           </div>
         </div>
 
-        {/* =========================================================
-           BARIS 2: SLOT MEGA BANNER IKLAN (PERBAIKAN: BANNER KEPOTONG)
-           ========================================================= */}
+        {/* BARIS 2: SLOT MEGA BANNER IKLAN */}
         <div className="w-full bg-gray-50/50 border-b border-gray-150 py-3">
           <div className="max-w-[1200px] w-full mx-auto flex justify-center overflow-hidden px-4">
             {midBannerData && bannerImgSrc ? (
               <a href={midBannerData.linkUrl || "#"} target="_blank" rel="noopener noreferrer" className="block w-full max-h-[140px] overflow-hidden relative group">
-                {/* PERBAIKAN NYATA: Mengubah object-cover menjadi object-contain / w-full h-auto */}
-                <img 
-                  src={bannerImgSrc} 
-                  alt={midBannerData.title || "Top Banner"} 
-                  className="w-full h-auto max-h-[140px] object-contain object-center" 
-                />
+                <img src={bannerImgSrc} alt="Top Banner" className="w-full h-auto object-cover object-center max-h-[140px]" />
                 <span className="absolute top-1 right-1 bg-black/40 text-white text-[8px] px-1 rounded uppercase tracking-tight">Ads</span>
               </a>
             ) : (
