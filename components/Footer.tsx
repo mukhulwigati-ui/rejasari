@@ -1,11 +1,40 @@
 // components/Footer.tsx
 import { FaYoutube, FaFacebook, FaInstagram, FaTwitter, FaTiktok } from 'react-icons/fa';
+import Link from 'next/link';
 
 export default function Footer() {
-  // Mengubah jaringan daerah Tribun menjadi tautan menu cepat / layanan sekolah yang berguna
+  
+  // =========================================================
+  // TEMPAT EDIT LINK & TEKS (TINGGAL UBAH DI SINI)
+  // =========================================================
+  
+  // 1. Edit Menu Jelajahi Situs (Kolom Tengah)
   const quickLinks = [
-    "Profil Sekolah", "Visi & Misi", "Data Guru & Staf", "Galeri Kegiatan", 
-    "Pengumuman", "Agenda Sekolah", "Prestasi Siswa", "Kontak Hubungi Kami"
+    { name: "Profil Sekolah", href: "/profil" },
+    { name: "Visi & Misi", href: "/profil/visi-misi" },
+    { name: "Data Guru & Staf", href: "/guru-staf" },
+    { name: "Galeri Kegiatan", href: "/galeri" },
+    { name: "Pengumuman", href: "/pengumuman" },
+    { name: "Media Islam", href: "https://onislam.web.id" },
+    { name: "Prestasi Siswa", href: "/prestasi" },
+    { name: "Kontak Hubungi Kami", href: "/kontak" }
+  ];
+
+  // 2. Edit Menu Informasi & Regulasi (Kolom Kanan)
+  const infoLinks = [
+    { name: "Tentang Kami", href: "/tentang-kami" },
+    { name: "Susunan Redaksi", href: "/redaksi" },
+    { name: "Kebijakan Privasi", href: "/kebijakan-privasi" },
+    { name: "Peta Situs", href: "/sitemap" }
+  ];
+
+  // 3. Edit Link Sosial Media (Kolom Kiri)
+  const socialLinks = [
+    { icon: <FaYoutube />, href: "https://youtube.com", hoverColor: "hover:text-red-600" },
+    { icon: <FaFacebook />, href: "https://facebook.com", hoverColor: "hover:text-blue-600" },
+    { icon: <FaInstagram />, href: "https://instagram.com", hoverColor: "hover:text-pink-600" },
+    { icon: <FaTwitter />, href: "https://twitter.com", hoverColor: "hover:text-gray-800" },
+    { icon: <FaTiktok />, href: "https://tiktok.com", hoverColor: "hover:text-black" },
   ];
 
   return (
@@ -19,13 +48,20 @@ export default function Footer() {
           <p className="text-xs text-gray-500 leading-relaxed max-w-[400px]">
             Portal berita dan informasi resmi SD Negeri 1 Rejasari, Kecamatan Purwokerto Barat. Menyajikan kabar terkini seputar kegiatan sekolah, prestasi siswa, program edukasi, dan pengumuman penting secara akurat.
           </p>
-          {/* Sosial Media Resmi Sekolah */}
+          
+          {/* Sosial Media Resmi (Otomatis Loop) */}
           <div className="flex gap-4 text-gray-400 text-lg pt-2">
-            <a href="#" className="hover:text-red-600 transition-colors"><FaYoutube /></a>
-            <a href="#" className="hover:text-blue-600 transition-colors"><FaFacebook /></a>
-            <a href="#" className="hover:text-pink-600 transition-colors"><FaInstagram /></a>
-            <a href="#" className="hover:text-gray-800 transition-colors"><FaTwitter /></a>
-            <a href="#" className="hover:text-black transition-colors"><FaTiktok /></a>
+            {socialLinks.map((soc, idx) => (
+              <a 
+                key={idx} 
+                href={soc.href} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={`transition-colors ${soc.hoverColor}`}
+              >
+                {soc.icon}
+              </a>
+            ))}
           </div>
         </div>
 
@@ -36,9 +72,9 @@ export default function Footer() {
           </h4>
           <div className="grid grid-cols-2 gap-2 text-xs text-gray-500">
             {quickLinks.map((link, idx) => (
-              <a key={idx} href="#" className="hover:text-[#0066ad] transition-colors">
-                {link}
-              </a>
+              <Link key={idx} href={link.href} className="hover:text-[#0066ad] transition-colors">
+                {link.name}
+              </Link>
             ))}
           </div>
         </div>
@@ -49,10 +85,11 @@ export default function Footer() {
             Informasi
           </h4>
           <div className="flex flex-col space-y-2 text-xs text-gray-500">
-            <a href="#" className="hover:text-[#0066ad] transition-colors">Tentang Kami</a>
-            <a href="#" className="hover:text-[#0066ad] transition-colors">Susunan Redaksi</a>
-            <a href="#" className="hover:text-[#0066ad] transition-colors">Kebijakan Privasi</a>
-            <a href="#" className="hover:text-[#0066ad] transition-colors">Peta Situs</a>
+            {infoLinks.map((link, idx) => (
+              <Link key={idx} href={link.href} className="hover:text-[#0066ad] transition-colors">
+                {link.name}
+              </Link>
+            ))}
           </div>
         </div>
 

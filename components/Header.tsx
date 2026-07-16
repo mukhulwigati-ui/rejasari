@@ -6,7 +6,7 @@ import { FaSearch, FaYoutube, FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaRe
 import { MdLiveTv } from 'react-icons/md';
 import { HiOutlineNewspaper, HiMenu } from 'react-icons/hi';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Tambahan untuk navigasi programmatik
+import { useRouter } from 'next/navigation';
 import { client, urlFor } from "@/lib/sanity";
 
 function getSanityImageUrl(imageSource: any): string | null {
@@ -31,29 +31,43 @@ function getTodayIndonesianDate() {
 
 export default function Header() {
   const date = getTodayIndonesianDate();
-  const router = useRouter(); // Inisialisasi router Next.js
+  const router = useRouter();
   
   const [midBannerData, setMidBannerData] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState(''); // State penampung keyword pencarian
+  const [searchQuery, setSearchQuery] = useState('');
   
   const categoriesRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // =========================================================
+  // PERBAIKAN DATA LINK 1: BARIS MENU UTAMA (KATEGORI)
+  // =========================================================
   const [categories, setCategories] = useState([
-    "Bisnis", "Seleb", "Lifestyle", "New Economy", "Techno", "Video", "Otomotif", 
-    "Edukasi", "Riset", "Sport", "Kesehatan", "Travel", "Food", "Tech", "Sains"
+    { name: "Beranda", href: "/" },
+    { name: "Profil Sekolah", href: "/profil" },
+    { name: "Visi & Misi", href: "/profil/visi-misi" },
+    { name: "Guru & Staf", href: "/guru-staf" },
+    { name: "Prestasi Siswa", href: "/prestasi" },
+    { name: "Pengumuman", href: "/search?category=pengumuman" },
+    { name: "Edukasi", href: "/search?category=edukasi" },
+    { name: "Galeri Kegiatan", href: "/galeri" },
+    { name: "Kontak Kami", href: "/kontak" }
   ]);
   
+  // =========================================================
+  // PERBAIKAN DATA LINK 2: BARIS KILAS WARTA / FITUR CEPAT
+  // =========================================================
   const kilasDaerah = [
-    "Jakarta", "Bandung", "Bogor", "Jogja", "Solo", "Semarang", "Surabaya", 
-    "Malang", "Bali", "Aceh", "Medan", "Pekanbaru", "Batam", "Palembang", "Balikpapan"
+    { name: "Kurikulum Merdeka", href: "/search?q=kurikulum" },
+    { name: "Pendaftaran PPDB", href: "/search?q=ppdb" },
+    { name: "Kegiatan Pramuka", href: "/search?q=pramuka" },
+    { name: "Parenting", href: "/search?q=parenting" },
+    { name: "Info Banyumas", href: "/search?q=banyumas" }
   ];
 
-  // Fungsi penanganan eksekusi pencarian berita
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Pindah ke halaman search dengan membawa query parameter (?q=)
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -135,17 +149,14 @@ export default function Header() {
               <FaRegUser className="text-xl text-gray-600 cursor-pointer md:hidden" />
             </div>
             
-            {/* =========================================================
-               AREA TENGAH: FORM INPUT PENCARIAN (PERBAIKAN AKTIF)
-               ========================================================= */}
-            {/* PERBAIKAN: Membungkus elemen dengan <form> dan mengikat data state onChange */}
+            {/* AREA PENCARIAN */}
             <div className="w-full md:w-[400px] shrink-0">
               <form onSubmit={handleSearchSubmit} className="relative w-full">
                 <input 
                   type="text" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari Berita" 
+                  placeholder="Cari Informasi Sekolah..." 
                   className="border border-gray-300 rounded-md py-1.5 pl-5 pr-10 text-xs w-full outline-none bg-gray-50/50 focus:bg-white focus:border-[#0066ad] transition-all" 
                 />
                 <button 
@@ -158,16 +169,16 @@ export default function Header() {
             </div>
 
             <div className="hidden md:flex items-center justify-end gap-5 text-gray-500 text-base shrink-0">
-              <button className="flex items-center gap-2 border border-gray-300 px-4 py-1 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition-colors">
-                <MdLiveTv className="text-red-600 text-sm animate-pulse" /> LIVE
-              </button>
+              <Link href="/galeri" className="flex items-center gap-2 border border-gray-300 px-4 py-1 rounded-full text-[11px] font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition-colors">
+                <MdLiveTv className="text-[#0066ad] text-sm animate-pulse" /> LIVE DOKUMENTASI
+              </Link>
               <div className="flex gap-4 text-gray-400 text-lg">
-                <FaYoutube className="hover:text-red-600 cursor-pointer transition-colors" /> 
-                <FaFacebook className="hover:text-blue-600 cursor-pointer transition-colors" /> 
-                <FaInstagram className="hover:text-pink-600 cursor-pointer transition-colors" /> 
-                <FaTwitter className="hover:text-gray-800 cursor-pointer transition-colors" /> 
-                <HiOutlineNewspaper className="hover:text-blue-500 cursor-pointer transition-colors" /> 
-                <FaTiktok className="hover:text-black cursor-pointer transition-colors" />
+                <a href="#" className="hover:text-red-600 cursor-pointer transition-colors"><FaYoutube /></a> 
+                <a href="#" className="hover:text-blue-600 cursor-pointer transition-colors"><FaFacebook /></a> 
+                <a href="#" className="hover:text-pink-600 cursor-pointer transition-colors"><FaInstagram /></a> 
+                <a href="#" className="hover:text-gray-800 cursor-pointer transition-colors"><FaTwitter /></a> 
+                <a href="#" className="hover:text-blue-500 cursor-pointer transition-colors"><HiOutlineNewspaper /></a> 
+                <a href="#" className="hover:text-black cursor-pointer transition-colors"><FaTiktok /></a>
               </div>
               <div className="border-l border-gray-200 pl-3">
                 <FaRegUser className="text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors" />
@@ -186,7 +197,7 @@ export default function Header() {
               </a>
             ) : (
               <div className="w-full h-[90px] md:h-[120px] bg-gray-100 border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 text-xs font-sans">
-                <span className="font-bold tracking-wider text-[10px] text-gray-400">RUANG IKLAN BANNER ATAS</span>
+                <span className="font-bold tracking-wider text-[10px] text-gray-400">RUANG INFORMASI PENGUMUMAN UTAMA SEKOLAH</span>
               </div>
             )}
           </div>
@@ -197,24 +208,32 @@ export default function Header() {
       <div className="w-full bg-white border-b border-gray-200 hidden md:block sticky top-0 z-50 shadow-xs">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-11 relative">
           
-          <div className="flex items-center gap-2 font-black text-red-600 text-base italic cursor-pointer select-none shrink-0 pr-4">
-            <span>T</span>
+          {/* Logo Aksen Inisial Sekolah Biru */}
+          <div className="flex items-center gap-2 font-black text-[#0066ad] text-base italic cursor-pointer select-none shrink-0 pr-4">
+            <span>S</span>
           </div>
           
+          {/* Loop Menu Utama Menggunakan Komponen Link Bawaan Next.js */}
           <div 
             ref={categoriesRef}
             style={hideScrollbarStyle}
             className="flex-1 flex gap-7 items-center overflow-x-auto h-full text-xs font-bold text-gray-600 [&::-webkit-scrollbar]:hidden"
           >
             {categories.map((cat, index) => (
-              <span key={index} className="hover:text-[#0066ad] cursor-pointer whitespace-nowrap tracking-wide py-3 border-b-2 border-b-transparent hover:border-b-[#0066ad] transition-all">
-                {cat}
-              </span>
+              <Link 
+                key={index} 
+                href={cat.href} 
+                className="hover:text-[#0066ad] cursor-pointer whitespace-nowrap tracking-wide py-3 border-b-2 border-b-transparent hover:border-b-[#0066ad] transition-all"
+              >
+                {cat.name}
+              </Link>
             ))}
           </div>
 
           <div className="flex items-center gap-1.5 pl-4 shrink-0 bg-white shadow-[-20px_0_20px_5px_#fff] z-10 h-full text-gray-400 select-none">
-            <span className="text-[11px] font-bold text-gray-500 mr-2 cursor-pointer hover:text-[#0066ad]">Tribunners</span>
+            <Link href="/agenda" className="text-[11px] font-bold text-gray-500 mr-2 cursor-pointer hover:text-[#0066ad]">
+              Agenda
+            </Link>
             
             <button 
               onMouseDown={() => startScrolling('left')}
@@ -236,19 +255,20 @@ export default function Header() {
         </div>
       </div>
 
-      {/* LAPISAN B: Jalur Teks KILAS Berita Daerah */}
+      {/* LAPISAN B: Jalur Teks KILAS Berita Sekolah */}
       <div className="w-full bg-white border-b border-gray-200 hidden md:block">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center h-8 text-[11px] font-sans tracking-wide py-1 relative">
           <span className="font-extrabold text-gray-800 uppercase shrink-0 mr-4 border-r border-gray-300 pr-4 z-10 bg-white">KILAS</span>
           
+          {/* Loop Menu Sub-Kilas Menggunakan Komponen Link */}
           <div 
             style={hideScrollbarStyle}
-            className="flex-1 flex gap-4 text-gray-600 items-center font-medium overflow-x-auto [&::-webkit-scrollbar]:hidden"
+            className="flex-1 flex gap-5 text-gray-600 items-center font-medium overflow-x-auto [&::-webkit-scrollbar]:hidden"
           >
-            {kilasDaerah.map((city, idx) => (
-              <span key={idx} className="hover:text-[#0066ad] cursor-pointer whitespace-nowrap transition-colors">
-                {city}
-              </span>
+            {kilasDaerah.map((item, idx) => (
+              <Link key={idx} href={item.href} className="hover:text-[#0066ad] cursor-pointer whitespace-nowrap transition-colors">
+                {item.name}
+              </Link>
             ))}
           </div>
         </div>
