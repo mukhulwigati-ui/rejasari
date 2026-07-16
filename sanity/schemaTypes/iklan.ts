@@ -12,10 +12,10 @@ export const iklan = defineType({
       type: 'string',
       options: {
         list: [
+          /* PERBAIKAN: Menambahkan keterangan Banner Atas agar jelas di Sanity Studio */
+          { title: 'Banner Atas / Tengah Utama (Di bawah Logo)', value: 'mid-banner' },
           { title: 'Sidebar Kiri (LeftIklan - 160px)', value: 'left-sidebar' },
-          { title: 'Banner Tengah Artikel', value: 'mid-banner' },
           { title: 'Sidebar Kanan Kotak (SidebarIklan)', value: 'right-sidebar' },
-          // PERBAIKAN: Menambahkan slot iklan baru berukuran 300 x 600 px
           { title: 'Sidebar Kanan Panjang (SidebarIklan - 300x600)', value: 'right-sidebar-large' },
         ],
       },
