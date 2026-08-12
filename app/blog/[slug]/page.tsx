@@ -51,7 +51,7 @@ function timeAgo(dateString?: string) {
   const past = new Date(dateString);
   const diffMs = now.getTime() - past.getTime();
   const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60000);
+  const diffHours = Math.floor(diffMins / 3600000);
 
   if (diffMins < 60) return `${diffMins <= 0 ? 1 : diffMins} menit lalu`;
   if (diffHours < 24) return `${diffHours} jam lalu`;
@@ -81,7 +81,7 @@ export default async function BlogDetailPage(props: Props) {
   if (!article) {
     return (
       <div className="flex-1 flex items-center justify-center py-20">
-        <p className="text-gray-500 font-semibold text-sm bg-white border border-gray-200 px-6 py-4 rounded-xl shadow-sm">
+        <p className="text-gray-500 font-semibold text-sm bg-white border border-gray-200 px-6 py-4 rounded-xl shadow-xs">
           Artikel tidak ditemukan di CMS database.
         </p>
       </div>
@@ -119,7 +119,7 @@ export default async function BlogDetailPage(props: Props) {
         <div className="flex-1 min-w-0 space-y-4">
           
           {/* BREADCRUMB PANAH LANCIP (ARROW STYLE) */}
-          <div className="w-full bg-[#f6f6f6] border border-gray-200 flex items-stretch text-[11px] h-7 rounded-sm select-none overflow-hidden font-sans">
+          <div className="w-full bg-[#f6f6f6] border border-gray-200 flex items-stretch text-[11px] h-7 rounded-xs select-none overflow-hidden font-sans">
             {/* Item 1: Home */}
             <Link 
               href="/" 
@@ -131,9 +131,9 @@ export default async function BlogDetailPage(props: Props) {
               Home
             </Link>
             
-            {/* Item 2: Regional */}
-            <a 
-              href="#" 
+            {/* Item 2: Regional/Blog */}
+            <Link 
+              href="/" 
               className="bg-[#5ca2df] text-white flex items-center pl-7 pr-6 font-semibold hover:bg-[#4a91ce] transition-colors relative z-10
                          before:content-[''] before:absolute before:top-0 before:left-0 before:border-t-[14px] before:border-t-transparent before:border-b-[14px] before:border-b-transparent before:border-l-[10px] before:border-l-[#f6f6f6]
                          after:content-[''] after:absolute after:top-0 after:right-0 after:translate-x-full after:z-20
@@ -141,7 +141,7 @@ export default async function BlogDetailPage(props: Props) {
                          after:border-l-[10px] after:border-l-[#5ca2df] hover:after:border-l-[#4a91ce]"
             >
               Blog
-            </a>
+            </Link>
             
             {/* Item 3: Nama Kategori Dinamis */}
             <span 
@@ -156,7 +156,7 @@ export default async function BlogDetailPage(props: Props) {
           </div>
 
           {/* BOX UTAMA WADAH ARTIKEL */}
-          <main className="w-full border border-gray-200 rounded-xl bg-white shadow-sm space-y-6">
+          <main className="w-full border border-gray-200 rounded-xl bg-white shadow-3xs space-y-6">
             
             {/* PADDING ATAS: Hanya untuk area judul dan media */}
             <div className="p-4 md:p-6 pb-0 space-y-6">
@@ -184,15 +184,15 @@ export default async function BlogDetailPage(props: Props) {
               {/* Social Share Icon Bar */}
               <div className="flex items-center justify-between border-b border-gray-100 pb-3 text-gray-400 text-sm overflow-x-auto gap-2">
                 <div className="flex items-center gap-5 shrink-0">
-                  <button className="flex items-center gap-1 hover:text-[#0b74b6] text-base"><FaThumbsUp /></button>
-                  <button className="flex items-center gap-1 hover:text-red-600 text-base"><FaThumbsDown /></button>
-                  <button className="hover:text-gray-800 text-base"><RiTwitterXFill /></button>
-                  <button className="hover:text-blue-600 text-base"><FaFacebook /></button>
-                  <button className="hover:text-green-500 text-base"><FaWhatsapp /></button>
-                  <button className="hover:text-blue-400 text-base"><FaTelegram /></button>
-                  <button className="hover:text-gray-800 text-base"><BiCommentDetail /></button>
+                  <button className="flex items-center gap-1 hover:text-[#0b74b6] text-base cursor-pointer"><FaThumbsUp /></button>
+                  <button className="flex items-center gap-1 hover:text-red-600 text-base cursor-pointer"><FaThumbsDown /></button>
+                  <button className="hover:text-gray-800 text-base cursor-pointer"><RiTwitterXFill /></button>
+                  <button className="hover:text-blue-600 text-base cursor-pointer"><FaFacebook /></button>
+                  <button className="hover:text-green-500 text-base cursor-pointer"><FaWhatsapp /></button>
+                  <button className="hover:text-blue-400 text-base cursor-pointer"><FaTelegram /></button>
+                  <button className="hover:text-gray-800 text-base cursor-pointer"><BiCommentDetail /></button>
                 </div>
-                <button className="hover:text-[#0b74b6] text-base shrink-0"><FaBookmark /></button>
+                <button className="hover:text-[#0b74b6] text-base shrink-0 cursor-pointer"><FaBookmark /></button>
               </div>
 
               {/* KONDISIONAL MEDIA: DETEKSI VIDEO YOUTUBE EMBED VS GAMBAR NORMAL */}
@@ -204,7 +204,7 @@ export default async function BlogDetailPage(props: Props) {
                 <div className="space-y-2">
                   <div className="w-full aspect-[16/10] bg-gray-200 rounded-xl overflow-hidden relative border border-gray-100 shadow-inner">
                     <img src={finalImageSrc} alt={article.title} className="w-full h-full object-cover object-center" />
-                    <button className="absolute bottom-3 right-3 bg-black/70 text-white text-[10px] md:text-xs px-2 py-1 rounded">🔍 lihat foto</button>
+                    <button className="absolute bottom-3 right-3 bg-black/70 text-white text-[10px] md:text-xs px-2 py-1 rounded-xs">🔍 lihat foto</button>
                   </div>
                 </div>
               )}
@@ -277,8 +277,11 @@ export default async function BlogDetailPage(props: Props) {
               <div className="space-y-3 pt-6 border-t border-gray-150">
                 <h3 className="text-sm font-bold text-[#0b74b6] border-b-2 border-b-[#0b74b6] pb-1.5 w-max flex items-center gap-1.5 uppercase">Kirim <span className="text-red-600">Komentar</span></h3>
                 <div className="space-y-3 bg-gray-50/50 p-4 rounded-xl border border-gray-200">
-                  <textarea rows={3} placeholder="Tulis komentar Anda..." className="w-full text-xs p-3 border border-gray-300 rounded-lg resize-none font-sans"></textarea>
-                  <div className="flex justify-between items-center"><p className="text-[9px] text-gray-400 italic">Isi komentar sepenuhnya menjadi tanggung jawab pengguna dan diatur dalam UU ITE.</p><button className="bg-[#0b74b6] text-white text-[11px] font-bold px-5 py-1.5 rounded-md uppercase">Kirim</button></div>
+                  <textarea rows={3} placeholder="Tulis komentar Anda..." className="w-full text-xs p-3 border border-gray-300 rounded-lg resize-none font-sans outline-none focus:border-[#0b74b6] transition-colors"></textarea>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[9px] text-gray-400 italic">Isi komentar sepenuhnya menjadi tanggung jawab pengguna dan diatur dalam UU ITE.</p>
+                    <button className="bg-[#0b74b6] text-white text-[11px] font-bold px-5 py-1.5 rounded-md uppercase cursor-pointer hover:bg-[#005596] transition-colors">Kirim</button>
+                  </div>
                 </div>
               </div>
 
