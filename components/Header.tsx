@@ -187,12 +187,12 @@ export default function Header() {
           </div>
         </div>
 
-        {/* BARIS 2: SLOT MEGA BANNER IKLAN (DENGAN BINGKAI PUTIH & DROP-SHADOW KEREN) */}
-        <div className="w-full bg-gray-50/60 border-b border-gray-150 py-4">
+        {/* BARIS 2: SLOT MEGA BANNER IKLAN (DENGAN DEEP DROPSHADOW & BINGKAI PUTIH POP-OUT) */}
+        <div className="w-full bg-slate-100/70 border-b border-gray-200 py-5">
           <div className="max-w-[1200px] w-full mx-auto flex justify-center overflow-hidden px-4">
             {midBannerData && bannerImgSrc ? (
-              /* BINGKAI MEWAH: bg-white, padding p-1.5, rounded-2xl, border & shadow-lg */
-              <div className="w-full bg-white p-1 md:p-1.5 rounded-2xl border border-gray-200/80 shadow-lg hover:shadow-xl transition-all duration-300">
+              /* PERBAIKAN: Menggunakan p-2, shadow-2xl pekat, serta ring-1 halus agar efek 3D melayang sangat menonjol */
+              <div className="w-full bg-white p-2 rounded-2xl border border-slate-200/90 shadow-2xl shadow-slate-400/30 hover:shadow-slate-500/40 transition-all duration-300 ring-1 ring-black/5">
                 <a 
                   href={midBannerData.linkUrl || "#"} 
                   target="_blank" 
@@ -204,14 +204,14 @@ export default function Header() {
                     alt="Top Banner" 
                     className="w-full h-auto object-cover object-center max-h-[140px] group-hover:scale-[1.01] transition-transform duration-300" 
                   />
-                  <span className="absolute top-2 right-2 bg-black/50 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider backdrop-blur-xs">
+                  <span className="absolute top-2 right-2 bg-black/60 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider backdrop-blur-xs">
                     Ads
                   </span>
                 </a>
               </div>
             ) : (
-              /* PLACEHOLDER BANNER DENGAN BINGKAI PUTIH & SHADOW */
-              <div className="w-full bg-white p-1 md:p-1.5 rounded-2xl border border-gray-200/80 shadow-md">
+              /* PLACEHOLDER DENGAN DEEP SHADOW */
+              <div className="w-full bg-white p-2 rounded-2xl border border-slate-200/90 shadow-2xl shadow-slate-400/20 ring-1 ring-black/5">
                 <div className="w-full h-[90px] md:h-[120px] bg-slate-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 text-xs font-sans">
                   <span className="font-bold tracking-wider text-[10px] text-gray-400">RUANG INFORMASI PENGUMUMAN UTAMA SEKOLAH</span>
                 </div>
