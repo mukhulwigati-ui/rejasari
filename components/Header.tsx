@@ -187,12 +187,13 @@ export default function Header() {
           </div>
         </div>
 
-        {/* BARIS 2: SLOT MEGA BANNER IKLAN (DENGAN DEEP DROPSHADOW & BINGKAI PUTIH POP-OUT) */}
-        <div className="w-full bg-slate-100/70 border-b border-gray-200 py-5">
-          <div className="max-w-[1200px] w-full mx-auto flex justify-center overflow-hidden px-4">
+        {/* BARIS 2: SLOT MEGA BANNER IKLAN (PERBAIKAN: SHADOW MERATA MEMBULAT TANPA TERPOTONG) */}
+        <div className="w-full bg-slate-100/60 border-b border-gray-200 py-6">
+          {/* PERBAIKAN: Menghapus overflow-hidden agar pendaran bayangan di atas & bawah tidak terpotong tajam */}
+          <div className="max-w-[1200px] w-full mx-auto flex justify-center px-4">
             {midBannerData && bannerImgSrc ? (
-              /* PERBAIKAN: Menggunakan p-2, shadow-2xl pekat, serta ring-1 halus agar efek 3D melayang sangat menonjol */
-              <div className="w-full bg-white p-2 rounded-2xl border border-slate-200/90 shadow-2xl shadow-slate-400/30 hover:shadow-slate-500/40 transition-all duration-300 ring-1 ring-black/5">
+              /* PERBAIKAN: Bingkai putih dengan shadow merata melingkar (box-shadow beradius lembut) */
+              <div className="w-full bg-white p-2 md:p-2.5 rounded-2xl border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.18)] transition-all duration-300">
                 <a 
                   href={midBannerData.linkUrl || "#"} 
                   target="_blank" 
@@ -210,8 +211,8 @@ export default function Header() {
                 </a>
               </div>
             ) : (
-              /* PLACEHOLDER DENGAN DEEP SHADOW */
-              <div className="w-full bg-white p-2 rounded-2xl border border-slate-200/90 shadow-2xl shadow-slate-400/20 ring-1 ring-black/5">
+              /* PLACEHOLDER DENGAN SHADOW MERATA */
+              <div className="w-full bg-white p-2 md:p-2.5 rounded-2xl border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.1)]">
                 <div className="w-full h-[90px] md:h-[120px] bg-slate-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 text-xs font-sans">
                   <span className="font-bold tracking-wider text-[10px] text-gray-400">RUANG INFORMASI PENGUMUMAN UTAMA SEKOLAH</span>
                 </div>
