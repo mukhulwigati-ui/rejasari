@@ -40,7 +40,7 @@ export default function Header() {
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // =========================================================
-  // PERBAIKAN DATA LINK 1: BARIS MENU UTAMA (KATEGORI)
+  // DATA LINK BARIS MENU UTAMA (KATEGORI)
   // =========================================================
   const [categories, setCategories] = useState([
     { name: "Beranda", href: "/" },
@@ -55,7 +55,7 @@ export default function Header() {
   ]);
   
   // =========================================================
-  // PERBAIKAN DATA LINK 2: BARIS KILAS WARTA / FITUR CEPAT
+  // DATA LINK BARIS KILAS WARTA / FITUR CEPAT
   // =========================================================
   const kilasDaerah = [
     { name: "Kurikulum Merdeka", href: "/search?q=kurikulum" },
@@ -187,17 +187,34 @@ export default function Header() {
           </div>
         </div>
 
-        {/* BARIS 2: SLOT MEGA BANNER IKLAN */}
-        <div className="w-full bg-gray-50/50 border-b border-gray-150 py-3">
+        {/* BARIS 2: SLOT MEGA BANNER IKLAN (DENGAN BINGKAI PUTIH & DROP-SHADOW KEREN) */}
+        <div className="w-full bg-gray-50/60 border-b border-gray-150 py-4">
           <div className="max-w-[1200px] w-full mx-auto flex justify-center overflow-hidden px-4">
             {midBannerData && bannerImgSrc ? (
-              <a href={midBannerData.linkUrl || "#"} target="_blank" rel="noopener noreferrer" className="block w-full max-h-[140px] overflow-hidden relative group">
-                <img src={bannerImgSrc} alt="Top Banner" className="w-full h-auto object-cover object-center max-h-[140px]" />
-                <span className="absolute top-1 right-1 bg-black/40 text-white text-[8px] px-1 rounded uppercase tracking-tight">Ads</span>
-              </a>
+              /* BINGKAI MEWAH: bg-white, padding p-1.5, rounded-2xl, border & shadow-lg */
+              <div className="w-full bg-white p-1 md:p-1.5 rounded-2xl border border-gray-200/80 shadow-lg hover:shadow-xl transition-all duration-300">
+                <a 
+                  href={midBannerData.linkUrl || "#"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="block w-full max-h-[140px] overflow-hidden rounded-xl relative group"
+                >
+                  <img 
+                    src={bannerImgSrc} 
+                    alt="Top Banner" 
+                    className="w-full h-auto object-cover object-center max-h-[140px] group-hover:scale-[1.01] transition-transform duration-300" 
+                  />
+                  <span className="absolute top-2 right-2 bg-black/50 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider backdrop-blur-xs">
+                    Ads
+                  </span>
+                </a>
+              </div>
             ) : (
-              <div className="w-full h-[90px] md:h-[120px] bg-gray-100 border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 text-xs font-sans">
-                <span className="font-bold tracking-wider text-[10px] text-gray-400">RUANG INFORMASI PENGUMUMAN UTAMA SEKOLAH</span>
+              /* PLACEHOLDER BANNER DENGAN BINGKAI PUTIH & SHADOW */
+              <div className="w-full bg-white p-1 md:p-1.5 rounded-2xl border border-gray-200/80 shadow-md">
+                <div className="w-full h-[90px] md:h-[120px] bg-slate-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 text-xs font-sans">
+                  <span className="font-bold tracking-wider text-[10px] text-gray-400">RUANG INFORMASI PENGUMUMAN UTAMA SEKOLAH</span>
+                </div>
               </div>
             )}
           </div>
