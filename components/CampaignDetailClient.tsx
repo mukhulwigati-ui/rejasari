@@ -7,6 +7,13 @@ import { PortableText } from '@portabletext/react';
 import { ArrowLeft, Share2, Copy, Check, MessageCircle, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client'; // 🚀 Menggunakan instance tunggal yang konsisten
 
+// Deklarasi global agar TypeScript mengenali window.snap dari Midtrans
+declare global {
+  interface Window {
+    snap: any;
+  }
+}
+
 // ===================================================================
 // 1. HEADER KHUSUS DETAIL PROGRAM
 // ===================================================================
@@ -430,14 +437,41 @@ export default function CampaignDetailClient({ slug, referral }: CampaignDetailC
       });
 
       const json = await res.json();
-      if (json.success && json.paymentUrl) {
-        window.location.href = json.paymentUrl;
+      
+      // 🚀 Integrasi Midtrans Snap Popup Pembayaran
+      if (json.success && json.token) {
+        if (typeof window !== 'undefined' && window.snap) {
+          window.snap.pay(json.token, {
+            onSuccess: function (result: any) {
+              window.location.href = `/donation/success?orderId=${json.orderId}`;
+            },
+            onPending: function (result: any) {
+              window.location.href = `/donation/success?orderId=${json.orderId}`;
+            },
+            onError: function (result: any) {
+              alert("Pembayaran gagal, silakan coba lagi.");
+              setSubmitting(false);
+            },
+            onClose: function () {
+              setSubmitting(false);
+            }
+          });
+        } else {
+          // Fallback jika script snap belum termuat
+          if (json.paymentUrl) {
+            window.location.href = json.paymentUrl;
+          } else {
+            alert('Midtrans Snap tidak tersedia.');
+            setSubmitting(false);
+          }
+        }
       } else {
-        alert(json.message || 'Gagal memproses tautan pembayaran.');
+        alert(json.message || 'Gagal memproses transaksi.');
+        setSubmitting(false);
       }
     } catch (err) {
+      console.error(err);
       alert('Terjadi kesalahan koneksi.');
-    } finally {
       setSubmitting(false);
     }
   };
@@ -447,7 +481,6 @@ export default function CampaignDetailClient({ slug, referral }: CampaignDetailC
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data) {
-          // Bersihkan slug dari URL dan slug dari database untuk dicocokkan dengan aman
           const cleanParamSlug = decodeURIComponent(slug).toLowerCase().replace(/[^a-z0-9]/g, '');
           
           const found = json.data.find((p: any) => {

@@ -1,6 +1,6 @@
 // app/api/donate/route.ts
 import { NextResponse } from 'next/server';
-import { createDokuCheckout } from '@/lib/doku';
+import midtransClient from 'midtrans-client';
 import { createClient } from '@sanity/client';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
@@ -11,6 +11,13 @@ const serverClient = createClient({
   useCdn: false,
   apiVersion: '2024-01-01',
   token: process.env.SANITY_API_TOKEN,
+});
+
+// Inisialisasi Midtrans Snap API Client
+const snap = new midtransClient.Snap({
+  isProduction: process.env.MIDTRANS_ENV === 'production' || true,
+  serverKey: process.env.MIDTRANS_SERVER_KEY || 'Mid-server-nqWkSxj9WZjDbgAhlb9tlb0w',
+  clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'Mid-client-NVjY5ccbH7M47czA',
 });
 
 export async function POST(request: Request) {
@@ -25,7 +32,6 @@ export async function POST(request: Request) {
     }
 
     const orderId = `TRX-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.islami.or.id';
 
     // 🚀 Gunakan await pada cookies() agar sesuai dengan tipe data Next.js terbaru
     const cookieStore = await cookies();
@@ -42,16 +48,31 @@ export async function POST(request: Request) {
     );
     const { data: { user } } = await supabase.auth.getUser();
 
-    // 1. Buat transaksi pembayaran di DOKU
-    const dokuResponse = await createDokuCheckout({
-      orderId,
-      amount: cleanAmount,
-      buyerName: donorName || 'Hamba Allah',
-      buyerEmail: email || 'support@islami.or.id',
-      buyerPhone: phone || '081225147373',
-      returnUrl: `${baseUrl}/donation/success?orderId=${orderId}`,
-      notifyUrl: `${baseUrl}/api/doku/webhook`,
-    });
+    // 1. Buat parameter transaksi untuk Midtrans Snap
+    const parameter = {
+      transaction_details: {
+        order_id: orderId,
+        gross_amount: cleanAmount,
+      },
+      customer_details: {
+        first_name: donorName || 'Hamba Allah',
+        email: email || 'support@islami.or.id',
+        phone: phone || '081225147373',
+      },
+      item_details: [
+        {
+          id: programId || 'DONASI-UMUM',
+          price: cleanAmount,
+          quantity: 1,
+          name: (programTitle || 'Sedekah / Infaq Online').substring(0, 50),
+        },
+      ],
+    };
+
+    // Minta Snap Token dari Midtrans
+    const transaction = await snap.createTransaction(parameter);
+    const token = transaction.token;
+    const redirectUrl = transaction.redirect_url;
 
     // 2. Simpan record transaksi awal berstatus pending ke Sanity CMS
     await serverClient.create({
@@ -67,8 +88,8 @@ export async function POST(request: Request) {
         _ref: programId,
       } : undefined,
       status: 'pending',
-      paymentUrl: dokuResponse.paymentUrl,
-      transactionId: String(dokuResponse.transactionId || ''),
+      paymentUrl: redirectUrl,
+      transactionId: orderId,
     });
 
     // 3. Simpan ke tabel Supabase `donations` agar tampil di "Donasi Saya" (Pending)
@@ -80,21 +101,22 @@ export async function POST(request: Request) {
           category: category || 'Kemanusiaan',
           amount: cleanAmount,
           status: 'pending',
-          payment_url: dokuResponse.paymentUrl,
+          payment_url: redirectUrl,
           invoice_id: orderId,
         },
       ]);
     }
 
-    // 4. Kembalikan respons sukses ke frontend
+    // 4. Kembalikan respons sukses beserta token Midtrans ke frontend
     return NextResponse.json({
       success: true,
-      paymentUrl: dokuResponse.paymentUrl,
+      token: token,
+      paymentUrl: redirectUrl,
       orderId,
     });
 
   } catch (error: any) {
-    console.error('🔥 Gagal membuat transaksi donasi DOKU:', error);
+    console.error('🔥 Gagal membuat transaksi donasi Midtrans:', error);
     return NextResponse.json({ success: false, message: error.message || 'Terjadi kesalahan server.' }, { status: 500 });
   }
 }
