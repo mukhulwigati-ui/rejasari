@@ -140,7 +140,7 @@ export default function Header() {
           <div className="flex flex-col md:flex-row md:items-center justify-between px-4 py-3 max-w-[1200px] mx-auto gap-3 md:gap-0">
             <div className="flex items-center justify-between md:justify-start gap-5 w-full md:w-auto shrink-0">
               <div className="flex items-center gap-3">
-                {/* HAMBURGER BUTTON MOBILE (HIDUP) */}
+                {/* HAMBURGER BUTTON MOBILE */}
                 <button 
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
                   className="p-1 text-2xl text-gray-700 hover:text-[#0066ad] transition-colors md:hidden focus:outline-none"
@@ -212,8 +212,8 @@ export default function Header() {
           </div>
         </div>
 
-        {/* BARIS 2: SLOT MEGA BANNER IKLAN (SHADOW MERATA MEMBULAT TANPA TERPOTONG) */}
-        <div className="w-full bg-slate-100/60 border-b border-gray-200 py-6">
+        {/* BARIS 2: SLOT MEGA BANNER IKLAN (PERBAIKAN: DILETAKKAN 'hidden md:block' AGAR DISEMBUNYIKAN DI MOBILE) */}
+        <div className="hidden md:block w-full bg-slate-100/60 border-b border-gray-200 py-6">
           <div className="max-w-[1200px] w-full mx-auto flex justify-center px-4">
             {midBannerData && bannerImgSrc ? (
               <div className="w-full bg-white p-2 md:p-2.5 rounded-2xl border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.18)] transition-all duration-300">
