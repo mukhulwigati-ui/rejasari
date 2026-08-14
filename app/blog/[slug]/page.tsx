@@ -1,4 +1,5 @@
 // app/blog/[slug]/page.tsx
+import type { Metadata } from "next";
 import LeftIklan from "@/components/LeftIklan";
 import SidebarIklan from "@/components/SidebarIklan";
 import SidebarPopuler from "@/components/SidebarPopuler";
@@ -71,6 +72,75 @@ function formatDate(dateString: string) {
   }) + " WIB";
 }
 
+// =========================================================
+// OPTIMASI SEO TINGKAT TINGGI & GENERATE METADATA DINAMIS MEDSOS
+// =========================================================
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
+  const article = await client.fetch(postDetailQuery, { slug: params.slug });
+
+  if (!article) {
+    return {
+      title: "Artikel Tidak Ditemukan | SDN 1 Rejasari",
+      description: "Halaman berita atau artikel yang Anda cari tidak ditemukan di basis data SDN 1 Rejasari Purwokerto Barat.",
+    };
+  }
+
+  // Resolusi Gambar Utama Artikel untuk Media Sosial & Google Indexing
+  const sanityImg = getSanityImageUrl(article.mainImage);
+  const youtubeId = getYoutubeId(article.youtubeUrl);
+  const youtubeThumb = youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null;
+  const shareImage = sanityImg || youtubeThumb || "https://sdn1rejasari.web.id/images/banner.png";
+
+  const canonicalUrl = `https://sdn1rejasari.web.id/blog/${params.slug}`;
+  const descriptionText = article.summary?.[0] || article.title;
+
+  return {
+    metadataBase: new URL("https://sdn1rejasari.web.id"),
+    title: `${article.title} | SDN 1 Rejasari Purwokerto Barat`,
+    description: descriptionText,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    authors: [{ name: article.author || "Redaksi SDN 1 Rejasari" }],
+    keywords: [
+      article.title,
+      article.category?.title || "Berita Sekolah",
+      "SDN 1 Rejasari",
+      "Purwokerto Barat",
+      "Kegiatan Sekolah Dasar Banyumas"
+    ],
+    
+    // OPEN GRAPH METADATA (WHATSAPP, FACEBOOK, TELEGRAM, LINKEDIN)
+    openGraph: {
+      title: article.title,
+      description: descriptionText,
+      url: canonicalUrl,
+      siteName: "SDN 1 Rejasari Purwokerto Barat",
+      locale: "id_ID",
+      type: "article",
+      publishedTime: article.publishedAt,
+      authors: [article.author || "Redaksi SDN 1 Rejasari"],
+      images: [
+        {
+          url: shareImage,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+    },
+
+    // TWITTER / X CARD METADATA
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: descriptionText,
+      images: [shareImage],
+    },
+  };
+}
+
 export default async function BlogDetailPage(props: Props) {
   const params = await props.params;
   const article = await client.fetch(postDetailQuery, { slug: params.slug });
@@ -107,8 +177,41 @@ export default async function BlogDetailPage(props: Props) {
   // DATA BERITA TERKINI: 6 Artikel terbaru
   const beritaTerkini = allPosts.filter((p) => p.slug !== params.slug).slice(0, 6);
 
+  // JSON-LD STRUCTURED DATA UNTUK GOOGLE RICH RESULTS & NEWS INDEXING
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": article.title,
+    "image": [finalImageSrc],
+    "datePublished": article.publishedAt,
+    "dateModified": article.publishedAt,
+    "author": [{
+      "@type": "Person",
+      "name": article.author || "Redaksi SDN 1 Rejasari"
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "SDN 1 Rejasari Purwokerto Barat",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sdn1rejasari.web.id/images/logo-sdn.png"
+      }
+    },
+    "description": article.summary?.[0] || article.title,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://sdn1rejasari.web.id/blog/${params.slug}`
+    }
+  };
+
   return (
     <div className="w-full max-w-[1200px] mx-auto px-4 mt-4 pb-12">
+      
+      {/* SCHEMA.ORG JSON-LD INJECTION UNTUK GOOGLE BOT */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
       {/* =========================================================
           STRUKTUR UTAMA RESPONSIF: KONTEN KIRI-TENGAH & SIDEBAR KANAN 300px
