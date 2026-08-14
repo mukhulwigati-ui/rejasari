@@ -2,7 +2,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { FaSearch, FaYoutube, FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaRegUser, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { FaSearch, FaYoutube, FaFacebook, FaInstagram, FaTwitter, FaTiktok, FaRegUser, FaAngleLeft, FaAngleRight, FaTimes } from 'react-icons/fa';
 import { MdLiveTv } from 'react-icons/md';
 import { HiOutlineNewspaper, HiMenu } from 'react-icons/hi';
 import Link from 'next/link';
@@ -35,6 +35,7 @@ export default function Header() {
   
   const [midBannerData, setMidBannerData] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // STATE UNTUK MENU HAMBURGER MOBILE
   
   const categoriesRef = useRef<HTMLDivElement>(null);
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -69,6 +70,7 @@ export default function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setIsMobileMenuOpen(false);
     }
   };
 
@@ -138,7 +140,14 @@ export default function Header() {
           <div className="flex flex-col md:flex-row md:items-center justify-between px-4 py-3 max-w-[1200px] mx-auto gap-3 md:gap-0">
             <div className="flex items-center justify-between md:justify-start gap-5 w-full md:w-auto shrink-0">
               <div className="flex items-center gap-3">
-                <HiMenu className="text-2xl text-gray-700 cursor-pointer md:hidden" />
+                {/* HAMBURGER BUTTON MOBILE (HIDUP) */}
+                <button 
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+                  className="p-1 text-2xl text-gray-700 hover:text-[#0066ad] transition-colors md:hidden focus:outline-none"
+                  aria-label="Toggle Menu"
+                >
+                  {isMobileMenuOpen ? <FaTimes /> : <HiMenu />}
+                </button>
                 <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
                   <img src="/images/logo-sdn.png" alt="Logo" className="h-8 md:h-10 object-contain cursor-pointer" />
                 </Link>
@@ -146,7 +155,15 @@ export default function Header() {
               <div className="text-[11px] md:text-xs text-gray-400 font-medium leading-tight hidden md:block border-l border-gray-300 pl-4 py-0.5 font-sans">
                 {date.line1}<br />{date.line2}
               </div>
-              <FaRegUser className="text-xl text-gray-600 cursor-pointer md:hidden" />
+              
+              {/* ICON USER MOBILE: Mengarah ke SANITY STUDIO */}
+              <a 
+                href="https://www.sdn1rejasari.web.id/studio" 
+                title="Masuk ke Sanity Studio Dashboard"
+                className="p-1 text-xl text-gray-600 hover:text-[#0066ad] transition-colors md:hidden cursor-pointer"
+              >
+                <FaRegUser />
+              </a>
             </div>
             
             {/* AREA PENCARIAN */}
@@ -161,7 +178,7 @@ export default function Header() {
                 />
                 <button 
                   type="submit" 
-                  className="absolute right-4 top-2.5 text-gray-400 text-sm hover:text-[#0066ad] transition-colors"
+                  className="absolute right-4 top-2.5 text-gray-400 text-sm hover:text-[#0066ad] transition-colors cursor-pointer"
                 >
                   <FaSearch />
                 </button>
@@ -180,19 +197,25 @@ export default function Header() {
                 <a href="#" className="hover:text-blue-500 cursor-pointer transition-colors"><HiOutlineNewspaper /></a> 
                 <a href="#" className="hover:text-black cursor-pointer transition-colors"><FaTiktok /></a>
               </div>
+              
+              {/* ICON USER DESKTOP: Mengarah ke SANITY STUDIO */}
               <div className="border-l border-gray-200 pl-3">
-                <FaRegUser className="text-lg cursor-pointer text-gray-500 hover:text-gray-800 transition-colors" />
+                <a 
+                  href="https://www.sdn1rejasari.web.id/studio" 
+                  title="Masuk ke Sanity Studio Dashboard"
+                  className="text-lg cursor-pointer text-gray-500 hover:text-[#0066ad] transition-colors block p-1"
+                >
+                  <FaRegUser />
+                </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* BARIS 2: SLOT MEGA BANNER IKLAN (PERBAIKAN: SHADOW MERATA MEMBULAT TANPA TERPOTONG) */}
+        {/* BARIS 2: SLOT MEGA BANNER IKLAN (SHADOW MERATA MEMBULAT TANPA TERPOTONG) */}
         <div className="w-full bg-slate-100/60 border-b border-gray-200 py-6">
-          {/* PERBAIKAN: Menghapus overflow-hidden agar pendaran bayangan di atas & bawah tidak terpotong tajam */}
           <div className="max-w-[1200px] w-full mx-auto flex justify-center px-4">
             {midBannerData && bannerImgSrc ? (
-              /* PERBAIKAN: Bingkai putih dengan shadow merata melingkar (box-shadow beradius lembut) */
               <div className="w-full bg-white p-2 md:p-2.5 rounded-2xl border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.18)] transition-all duration-300">
                 <a 
                   href={midBannerData.linkUrl || "#"} 
@@ -211,7 +234,6 @@ export default function Header() {
                 </a>
               </div>
             ) : (
-              /* PLACEHOLDER DENGAN SHADOW MERATA */
               <div className="w-full bg-white p-2 md:p-2.5 rounded-2xl border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.1)]">
                 <div className="w-full h-[90px] md:h-[120px] bg-slate-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 text-xs font-sans">
                   <span className="font-bold tracking-wider text-[10px] text-gray-400">RUANG INFORMASI PENGUMUMAN UTAMA SEKOLAH</span>
@@ -222,7 +244,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* BARIS 3: NAVIGASI KATEGORI UTAMA */}
+      {/* BARIS 3: NAVIGASI KATEGORI UTAMA (DESKTOP) */}
       <div className="w-full bg-white border-b border-gray-200 hidden md:block sticky top-0 z-50 shadow-xs">
         <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-11 relative">
           
@@ -272,6 +294,41 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      {/* DRAWER MENU MOBILE RESPONSIF (AKTIF DARI HAMBURGER) */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-b border-gray-200 px-4 py-4 space-y-3 shadow-lg">
+          <p className="text-[10px] font-extrabold text-[#0066ad] uppercase tracking-wider border-b border-gray-100 pb-1">Menu Utama Navigasi</p>
+          <div className="grid grid-cols-2 gap-2 text-xs font-bold text-gray-700">
+            {categories.map((cat, index) => (
+              <Link 
+                key={index} 
+                href={cat.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 bg-gray-50 rounded-lg hover:bg-[#0066ad] hover:text-white transition-colors block text-center"
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+          
+          <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
+            <a 
+              href="https://www.sdn1rejasari.web.id/studio" 
+              className="text-xs font-bold text-[#0066ad] flex items-center gap-2 hover:underline"
+            >
+              <FaRegUser /> Masuk Sanity Studio
+            </a>
+            <Link 
+              href="/galeri" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-[10px] font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full flex items-center gap-1"
+            >
+              <MdLiveTv className="text-[#0066ad]" /> LIVE DOKUMENTASI
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* LAPISAN B: Jalur Teks KILAS Berita Sekolah */}
       <div className="w-full bg-white border-b border-gray-200 hidden md:block">
